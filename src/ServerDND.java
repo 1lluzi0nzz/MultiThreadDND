@@ -216,10 +216,13 @@ public class ServerDND {
 					}else if(cm.toLowerCase().equals("died")) {
 						broadcast(username + " has died.");
 					}else if(cm.toLowerCase().startsWith("attack")) {
-						Enemy target = m.rooms.get(m.currentIndex).enemies.get(Integer.parseInt(""+cm.charAt(7)));
-						int dmgTaken = p.attack(target);
-						m.rooms.get(m.currentIndex).enemies.get(Integer.parseInt(""+cm.charAt(7))).health -= dmgTaken;
-						broadcast(p.name + " attacked "+target.type+" "+target.id+ " for " + dmgTaken);
+						if(canAttack(m.rooms.get(m.currentIndex).enemies)) {
+							Enemy target = m.rooms.get(m.currentIndex).enemies.get(Integer.parseInt(""+cm.charAt(7)));
+							int dmgTaken = p.attack(target);
+							m.rooms.get(m.currentIndex).enemies.get(Integer.parseInt(""+cm.charAt(7))).health -= dmgTaken;
+							broadcast(p.name + " attacked "+target.type+" "+target.id+ " for " + dmgTaken);
+							p.turn = false;
+						}
 					}
 					
 					else {
@@ -310,11 +313,32 @@ public class ServerDND {
 			}
 		}
 		private String printEnemiesInRoom() {
-			String s = "\n\nENEMIES FOUND\n\n";
-			for(int i = 0; i < m.rooms.get(m.currentIndex).enemies.size(); i++) {
-				s += i + ") " + m.rooms.get(m.currentIndex).enemies.get(i).type + "\n";
+			String s;
+			if(m.rooms.get(m.currentIndex).enemies.isEmpty()) {
+				s = "\n\nNO ENEMIES FOUND - ROOM CLEARED\n\n";
+			}else {
+				s = "\n\nENEMIES FOUND\n\n";
+				for(int i = 0; i < m.rooms.get(m.currentIndex).enemies.size(); i++) {
+					s += i + ") " + m.rooms.get(m.currentIndex).enemies.get(i).type + "\n";
+				}
 			}
 			return s;
+		}
+		private boolean canAttack(ArrayList<Enemy> e) {
+			boolean b = true;
+			if(!p.turn) {
+				writeMsg("Can't Attack, not your turn!");
+				b = false;
+			}
+			if(p.health <= 0) {
+				writeMsg("Can't Attack, You are dead!");
+				b = false;
+			}
+			if(e.isEmpty()) {
+				writeMsg("Can't Attack, No enemies to attackd!");
+				b = false;
+			}
+			return b;
 		}
 	}
 }

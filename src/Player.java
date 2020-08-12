@@ -15,18 +15,18 @@ public class Player implements Serializable{
 	public Player(String name, int i) {
 		this.name = name;
 		if(i == 1) {
-			this.type = "warrior";
+			this.type = "Warrior";
 			this.health = 10;
 			this.attackDMG = 4;
 			this.armor = 3;
 			items.add("Shield");
 		}else if(i == 2) {
-			this.type = "wizard";
+			this.type = "Wizard";
 			this.health = 7;
 			this.attackDMG = 8;
 			this.armor = 0;
 		}else if(i == 3) {
-			this.type = "paladin";
+			this.type = "Paladin";
 			this.health = 14;
 			this.attackDMG = 2;
 			this.armor = 5;
@@ -68,15 +68,6 @@ public class Player implements Serializable{
 			s += "\n - "+items.get(i);
 		}
 		return s;
-	}
-	public boolean canAttack(ArrayList<Enemy> e) {
-		boolean b = false;
-		if(turn) {
-			if(!e.isEmpty()) {
-				return true;
-			}
-		}
-		return b;
 	}
 	public int attack(Enemy e) {
 		int dmg = this.attackDMG - e.armor;
