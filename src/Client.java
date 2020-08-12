@@ -45,10 +45,8 @@ public class Client  {
 		}
 		new ListenFromServer().start();
 		try{
-			//sOutput.writeObject(username);
 			sOutput.writeObject(p);
-		}
-		catch (IOException eIO) {
+		}catch (IOException eIO) {
 			System.out.println("Exception doing login : " + eIO);
 			disconnect();
 			return false;
@@ -118,24 +116,20 @@ public class Client  {
 		System.out.println("2. Type 'LIST PARTY' to see who is in the game");
 		System.out.println("3. Type 'STATUS' to show your stats.");
 		System.out.println("4. Type 'TURN' to show your parties remaining turns.");
-		System.out.println("5. Type 'QUIT' to close the game\n");
+		System.out.println("5. Type 'ENEMIES' to list all of the enemies in the room.");
+		System.out.println("6. Type 'QUIT' to close the game\n");
 		
-		while(p.health > 0) {
+		while(true) {
 			System.out.print("> ");
 			String msg = scan.nextLine();
 			if(msg.equalsIgnoreCase("QUIT")) {
 				client.sendMessage("QUIT");
 				break;
-			}
-
-			else {
+			}else if(msg.length() > 0){
 				client.sendMessage(msg);
 			}
 		}
-		if(p.health <= 0) {
-			System.out.println("You have died");
-			client.sendMessage("QUIT");
-		}
+		
 		scan.close();
 		client.disconnect();	
 	}
@@ -146,7 +140,7 @@ public class Client  {
 			while(true) {
 				try {
 					String msg = (String) sInput.readObject();
-					System.out.println(msg);
+					System.out.print(msg);
 					System.out.print("> ");
 				}
 				catch(IOException e) {

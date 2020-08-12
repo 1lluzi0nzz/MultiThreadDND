@@ -68,8 +68,8 @@ public class ServerDND {
 		String[] w = message.split(" ",3);
 		
 		boolean isPrivate = false;
-		if(w[1].charAt(0)=='@') 
-			isPrivate=true;
+		//if(w[1].charAt(0)=='@') 
+		//	isPrivate=true;
 		
 		if(isPrivate==true){
 			String tocheck=w[1].substring(1, w[1].length());
@@ -179,12 +179,18 @@ public class ServerDND {
 			boolean keepGoing = true;
 			while(keepGoing) {
 				try {
-					cm = (String) sInput.readObject();
+					//Check if everyones turn is over for enemys
 					
+					if(checkPartiesTurnOver()) {
+						doEnemyAttack();
+						setPartiesTurn();
+						continue;
+					}else
+						checkDeaths();
+					cm = (String) sInput.readObject();
+
 					//Commands Logic Here
-					if(cm.toLowerCase().startsWith("hello")) {
-						broadcast(username + " said hello!");
-					}else if(cm.toLowerCase().startsWith("list party")) {
+					if(cm.toLowerCase().startsWith("list party")) {
 						for(int i = 0; i < al.size(); ++i) {
 							ClientThread ct = al.get(i);
 							System.out.println();
@@ -205,6 +211,8 @@ public class ServerDND {
 						p.turn = false;
 					}else if(cm.toLowerCase().startsWith("enemies")) {
 						writeMsg(ServerDND.m.rooms.get(m.currentIndex).displayEnemiesInRoom());
+					}else if(cm.toLowerCase().equals("died")) {
+						broadcast(username + " has died.");
 					}
 					
 					else {
@@ -247,7 +255,7 @@ public class ServerDND {
 			this.username = username;
 		}
 		public boolean checkPartiesTurnOver() {
-			for(int i = 0; i < al.size(); ++i) {
+			for(int i = 0; i < al.size(); i++) {
 				ClientThread ct = al.get(i);
 				if(ct.p.turn == true) {
 					return false;
@@ -255,6 +263,34 @@ public class ServerDND {
 			}
 			broadcast("ALL MEMBERS HAVE TAKEN THEIR TURNS");
 			return true;
+		}
+		public void doEnemyAttack() {
+			Random r = new Random();
+			for(int i = 0; i < m.rooms.get(m.currentIndex).enemies.size(); i++) {
+				//Skeleton attacked 1lluzi0nzz for dmgTaken
+				Player target = al.get(r.nextInt(al.size())).p;
+				int dmgTaken = m.rooms.get(m.currentIndex).enemies.get(i).attack(al.get(r.nextInt(al.size())).p);
+				p.health -= m.rooms.get(m.currentIndex).enemies.get(i).attack(target);
+				broadcast(m.rooms.get(m.currentIndex).enemies.get(i).type + " attacked "+target.name+ " for " + dmgTaken);
+			}
+		}
+		private ClientThread getRandomPartyMember(){
+			Random r = new Random();
+			return al.get(r.nextInt(al.size()));
+		}
+		private void setPartiesTurn() {
+			for(int i = 0; i < al.size(); i++) {
+					al.get(i).p.turn = true;
+			}
+			broadcast("ITS THE PARTIES TURN NOW.");
+		}
+		private void checkDeaths() {
+			for(int i = 0; i < al.size(); i++) {
+				if(al.get(i).p.health <= 0) {
+					broadcast(al.get(i).p.name+" has died");
+					remove(id);
+				}
+			}
 		}
 	}
 }
