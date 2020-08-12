@@ -1,0 +1,11 @@
+ALL MEMBERS IN PARTY = 'al' list. 
+
+Show Enemies in a room
+
+PARTIES TURN
+	for each party member
+
+
+ENEMIES TURN
+	for each enemy, attack() a random member in party
+	set all players turns back to true
