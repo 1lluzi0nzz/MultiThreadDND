@@ -115,9 +115,10 @@ public class Client  {
 		System.out.println("1. Simply type the message to send broadcast to all active clients");
 		System.out.println("2. Type 'LIST PARTY' to see who is in the game");
 		System.out.println("3. Type 'STATUS' to show your stats.");
-		System.out.println("4. Type 'TURN' to show your parties remaining turns.");
-		System.out.println("5. Type 'ENEMIES' to list all of the enemies in the room.");
-		System.out.println("6. Type 'QUIT' to close the game\n");
+		System.out.println("4. Type 'ENEMIES' to show enemies in room");
+		System.out.println("5. Type 'TURN' to show your parties remaining turns.");
+		System.out.println("6. Type 'ATTACK X' where X is the enemy target.");
+		System.out.println("7. Type 'QUIT' to close the game\n");
 		
 		while(true) {
 			System.out.print("> ");

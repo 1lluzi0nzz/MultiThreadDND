@@ -187,6 +187,8 @@ public class ServerDND {
 						continue;
 					}else
 						checkDeaths();
+						checkEnemyDeaths();
+						broadcast(printEnemiesInRoom());
 					cm = (String) sInput.readObject();
 
 					//Commands Logic Here
@@ -206,13 +208,18 @@ public class ServerDND {
 						}
 					}else if(cm.toLowerCase().startsWith("status")) {
 						writeMsg(p.showStatus());
+					}else if(cm.toLowerCase().startsWith("enemies")) {
+						writeMsg(ServerDND.m.rooms.get(m.currentIndex).displayEnemiesInRoom());
 					}else if(cm.toLowerCase().startsWith("end")) {
 						broadcast(p.name + " ended their turn");
 						p.turn = false;
-					}else if(cm.toLowerCase().startsWith("enemies")) {
-						writeMsg(ServerDND.m.rooms.get(m.currentIndex).displayEnemiesInRoom());
 					}else if(cm.toLowerCase().equals("died")) {
 						broadcast(username + " has died.");
+					}else if(cm.toLowerCase().startsWith("attack")) {
+						Enemy target = m.rooms.get(m.currentIndex).enemies.get(Integer.parseInt(""+cm.charAt(7)));
+						int dmgTaken = p.attack(target);
+						m.rooms.get(m.currentIndex).enemies.get(Integer.parseInt(""+cm.charAt(7))).health -= dmgTaken;
+						broadcast(p.name + " attacked "+target.type+" "+target.id+ " for " + dmgTaken);
 					}
 					
 					else {
@@ -291,6 +298,23 @@ public class ServerDND {
 					remove(id);
 				}
 			}
+		}
+		private void checkEnemyDeaths() {
+			for(int i = 0; i < m.rooms.get(m.currentIndex).enemies.size(); i++) {
+				if(m.rooms.get(m.currentIndex).enemies.get(i).health <= 0) {
+					m.rooms.get(m.currentIndex).enemies.remove(m.rooms.get(m.currentIndex).enemies.get(i));
+					if(i >= m.rooms.get(m.currentIndex).enemies.size() || i < 0) {
+						i--;
+					}
+				}
+			}
+		}
+		private String printEnemiesInRoom() {
+			String s = "\n\nENEMIES FOUND\n\n";
+			for(int i = 0; i < m.rooms.get(m.currentIndex).enemies.size(); i++) {
+				s += i + ") " + m.rooms.get(m.currentIndex).enemies.get(i).type + "\n";
+			}
+			return s;
 		}
 	}
 }

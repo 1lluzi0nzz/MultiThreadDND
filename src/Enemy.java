@@ -40,7 +40,10 @@ public class Enemy {
 	}
 	public int attack(Player p) {
 		int dmg = this.attackDMG - p.armor;
-		if(p.armor >= this.attackDMG) {
+		if(p.hasShield()) {
+			dmg -= Items.shieldArmor;
+		}
+		if(p.armor >= this.attackDMG || dmg < 0) {
 			dmg = 0;
 		}
 		return dmg;

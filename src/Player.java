@@ -19,6 +19,7 @@ public class Player implements Serializable{
 			this.health = 10;
 			this.attackDMG = 4;
 			this.armor = 3;
+			items.add("Shield");
 		}else if(i == 2) {
 			this.type = "wizard";
 			this.health = 7;
@@ -34,7 +35,22 @@ public class Player implements Serializable{
 	}
 	public boolean hasShield() {
 		if(items.contains("Shield")) {
-			this.armor = this.armor + Items.shieldArmor;
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
+	public boolean hasFireball() {
+		if(items.contains("Fireball")) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
+	public boolean hasPotion() {
+		if(items.contains("Potion")) {
 			return true;
 		}else {
 			return false;
@@ -62,8 +78,12 @@ public class Player implements Serializable{
 		}
 		return b;
 	}
-	public void attack(Enemy e) {
-
+	public int attack(Enemy e) {
+		int dmg = this.attackDMG - e.armor;
+		if(e.armor >= this.attackDMG) {
+			dmg = 0;
+		}
+		return dmg;
 	}
 	public void useItem(String s) {
 		
